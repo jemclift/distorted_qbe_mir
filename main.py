@@ -1,28 +1,13 @@
-import wave
-import numpy as np
-import matplotlib.pyplot as plt
+from audio import Audio
+from spectrogram import Spectrogram, PointMarker
+from fingerprinter import Fingerprinter
 
-filename = "The Clocktower Reel.wav"
+tcr = Audio("The Clocktower Reel.wav", 1)
 
-with wave.open(filename, "rb") as sound_file:
+tcr_spg = Spectrogram(tcr.audio_data, tcr.sampling_freq)
+tcr_fp = Fingerprinter(tcr_spg)
 
-    assert sound_file.getsampwidth() == 2, "only 16 bit audio supported"
+for pm in tcr_fp.choose_peaks():
+    tcr_spg.add_point_marker(pm)
 
-    channels = sound_file.getnchannels()  # audio channels (1 for mono, 2 for stereo)
-    framerate = sound_file.getframerate()  # sampling frequency
-
-    raw_data = sound_file.readframes(-1) # read all frames as bytes
-
-audio_data = np.frombuffer(raw_data, dtype=np.int16)
-
-if channels == 2:
-    audio_data = audio_data[::2]  # take only one channel (left or right)
-
-plt.figure(figsize=(12, 6))
-plt.specgram(audio_data, NFFT=1024, Fs=framerate, scale="dB")
-
-plt.xlabel("time (s)")
-plt.ylabel("frequency (Hz)")
-plt.colorbar(label="intensity (dB)")
-
-plt.show()
+tcr_spg.display()
