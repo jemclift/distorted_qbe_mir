@@ -1,5 +1,5 @@
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 class PointMarker():
     def __init__(self, time, freq):
@@ -13,7 +13,7 @@ class Spectrogram():
         self.sampling_freq = sampling_freq
 
         # spectrogram
-        self.spectrogram = 0
+        self.spectrum = 0
         self.row_freqs = 0
         self.col_times = 0
         self.calculate_spectrogram()
@@ -35,7 +35,11 @@ class Spectrogram():
         self.point_marker_ys.append(point_marker.freq)
 
     def display(self):
-        plt.figure(figsize=(12, 6))
+
+        fig, ax = plt.subplots(figsize=(12, 6))
+        # fig, ax = plt.subplots()
+        ax.set_xlim(4, 18)
+        ax.set_ylim(0, 4000)
 
         plt.pcolormesh(
             self.col_times, 
