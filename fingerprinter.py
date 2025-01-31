@@ -1,33 +1,40 @@
 from spectrogram import PointMarker
-from itertools import product
 
 class Fingerprinter():
+
     def __init__(self, spectrum, row_freqs, col_times):
         self.spectrum = spectrum
         self.row_freqs = row_freqs
         self.col_times = col_times
 
+
     # creates a constellation map of spectral peaks
-    def find_peaks(self):
+    def find_peaks(self, min_freq=None, max_freq=None, start_time=None, stop_time=None):
 
         peaks = []
 
         for row_i, sg_row in enumerate(self.spectrum):
             for col_i, sg_item in enumerate(sg_row):
 
-                #    a
-                # d  +  b
-                #    c
+                if min_freq != None and self.row_freqs[row_i] < min_freq:
+                    continue
+                if max_freq != None and self.row_freqs[row_i] > max_freq:
+                    continue
+                if start_time != None and self.col_times[col_i] < start_time:
+                    continue
+                if stop_time != None and self.col_times[col_i] > stop_time:
+                    continue
 
+                # north, east, south, west
                 a, b, c, d = 7, 25, 7, 25
 
                 if self.is_local_maxima((row_i, col_i), (a, b, c, d)):
                     peak = PointMarker(self.col_times[col_i], self.row_freqs[row_i])
                     peaks.append(peak)
 
-            print(f"{row_i+1} / {self.spectrum.shape[0]}")
+            # print(f"{row_i+1} / {self.spectrum.shape[0]}")
 
-        input(len(peaks))
+        print(f"{len(peaks)} peaks found")
 
         return peaks
 
