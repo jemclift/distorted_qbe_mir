@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 class PointMarker():
 
     def __init__(self, time, freq):
@@ -67,4 +68,7 @@ class Spectrogram():
 
         plt.scatter(self.point_marker_xs, self.point_marker_ys, c="k", marker="x")
 
-        plt.show()
+        plt.show(block=False)
+
+        input("press enter to close plot...")
+        plt.close()

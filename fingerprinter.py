@@ -1,5 +1,6 @@
 from spectrogram import PointMarker
 
+
 class Fingerprinter():
 
     def __init__(self, spectrum, row_freqs, col_times):
@@ -26,7 +27,9 @@ class Fingerprinter():
                     continue
 
                 # north, east, south, west
-                a, b, c, d = 7, 25, 7, 25
+                # a, b, c, d = 7, 25, 7, 25
+
+                a, b, c, d = 7, 30, 7, 30
 
                 if self.is_local_maxima((row_i, col_i), (a, b, c, d)):
                     peak = PointMarker(self.col_times[col_i], self.row_freqs[row_i])

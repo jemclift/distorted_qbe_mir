@@ -1,7 +1,9 @@
 import wave
 import numpy as np
 
+
 class Audio():
+
     def __init__(self, filename, channel):
         self.filename = filename
         self.channel_selection = channel
@@ -13,6 +15,7 @@ class Audio():
 
         self.prune_channels()
         
+
     # loads audio data from file into an ndarray
     def load(self):
         with wave.open(self.filename, "rb") as sound_file:
@@ -24,6 +27,7 @@ class Audio():
             raw_data = sound_file.readframes(-1) # read all frames as bytes
 
         self.audio_data = np.frombuffer(raw_data, dtype=np.int16)
+
 
     # selects one audio channel (must be run after load)
     def prune_channels(self):
