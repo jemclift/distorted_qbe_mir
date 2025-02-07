@@ -45,13 +45,13 @@ class Spectrogram():
         self.point_marker_ys.append(point_marker.freq)
 
 
-    def display(self, min_freq=None, max_freq=None, start_time=None, stop_time=None, spg=True):
+    def display(self, limit_freq=None, spg=True):
 
         fig, ax = plt.subplots(figsize=(12, 6))
         # fig, ax = plt.subplots()
 
-        ax.set_xlim(start_time, stop_time)
-        ax.set_ylim(min_freq, max_freq)
+        if limit_freq:
+            ax.set_ylim(*limit_freq)
 
         if spg:
             plt.pcolormesh(
@@ -63,6 +63,7 @@ class Spectrogram():
 
             plt.colorbar(label="intensity (dB)")
 
+        plt.title("spectrogram")
         plt.xlabel("time (s)")
         plt.ylabel("frequency (Hz)")
 

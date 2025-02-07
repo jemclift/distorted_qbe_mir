@@ -5,58 +5,73 @@ from hasher import Hash, Hasher
 from database import SongDetails, SongDatabase
 import pickle
 
-# limit the search and display axis
-
-# freq_range = (0, 4000)
-# time_range = (4, 18)
-
-# freq_range = (None, None)
-# time_range = (None, None)
 
 time_range = (None, None)
 freq_range = (0, 5000)
 
+re_process_songs = False
+save_database = False
 
-# database = SongDatabase()
-# songs = ["The Clocktower Reel.wav", "22 Remix.wav", "SEE NO EVIL.wav"]
-# # songs = ["The Clocktower Reel.wav"]
+if re_process_songs:
 
-# for song in songs:
+    database = SongDatabase()
+    songs = ["The Clocktower Reel.wav", "22 Remix.wav", "SEE NO EVIL.wav"]
 
-#     print(f"analysing \"{song}\"...")
+    for song in songs:
 
-#     # load the audio, spectrogram and fingerprinter
-#     audio = Audio(song, 1)
-#     spectrogram = Spectrogram(audio.audio_data, audio.sampling_freq)
-#     fingeprinter = Fingerprinter(spectrogram.spectrum, spectrogram.row_freqs, spectrogram.col_times)
+        print(f"analysing \"{song}\"...")
 
-#     # find the spectral peaks and add their point markers to the graph
-#     spectral_peaks = fingeprinter.find_peaks(*freq_range, *time_range)
+        # load the audio, spectrogram and fingerprinter
+        audio = Audio(song, 1)
+        spectrogram = Spectrogram(audio.audio_data, audio.sampling_freq)
+        fingeprinter = Fingerprinter(spectrogram.spectrum, spectrogram.row_freqs, spectrogram.col_times)
 
-#     hasher = Hasher(spectral_peaks)
-#     hashes = hasher.generate_hashes(True, False)
+        # find the spectral peaks and add their point markers to the graph
+        spectral_peaks = fingeprinter.find_peaks(*freq_range, *time_range)
 
-#     # for pm in spectral_peaks:
-#     #     spectrogram.add_point_marker(pm)
-#     # spectrogram.display(*freq_range, *time_range, True)
+        # generate the hashes
+        hasher = Hasher(spectral_peaks)
+        hashes = hasher.generate_hashes(True, False)
 
-#     song_details = SongDetails(song, "unknown", "unknown")
-#     database.add_song(song_details, hashes)
+        for pm in spectral_peaks:
+            spectrogram.add_point_marker(pm)
 
-# print("done")
+        spectrogram.display()
+        spectrogram.display(freq_range)
+        spectrogram.display(freq_range, False)
 
-# with open("song_database", "ab") as db_file:
-#     pickle.dump(database, db_file)
+        # store the song in the database
+        song_details = SongDetails(song, "unknown", "unknown")
+        database.add_song(song_details, hashes)
 
-# print("dumped")
+    print("done processing")
+
+    if save_database:
+        with open("song_database", "wb") as db_file:
+            pickle.dump(database, db_file)
+
+        print("database dumped")
+    else:
+        print("not dumping database")
+
+else:
+    with open("song_database", "rb") as db_file:
+        database = pickle.load(db_file)
+
+    print("database loaded")
 
 
 
-with open("song_database", "rb") as db_file:
-    database = pickle.load(db_file)
 
-print("loaded")
 
+
+
+
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 audio = Audio("clock sample.wav", 1)
@@ -65,13 +80,6 @@ fingeprinter = Fingerprinter(spectrogram.spectrum, spectrogram.row_freqs, spectr
 spectral_peaks = fingeprinter.find_peaks(*freq_range, *time_range)
 hasher = Hasher(spectral_peaks)
 hashes = hasher.generate_hashes(True, True)
-
-
-
-
-
-import numpy as np
-import matplotlib.pyplot as plt
 
 song_hits = {}
 sample_time_per_track = {}
@@ -115,17 +123,27 @@ if len(sample_time_per_track.keys()) == 0:
     print("no hash hits")
     exit()
 
+
+plt.bar([str(x) for x in song_hits.keys()], song_hits.values(), color="#4D4670")
 print(song_hits)
+
+plt.title("hash matches for sample in database")
+plt.xlabel("track number")
+plt.ylabel("hash matches")
+
+plt.show(block=False)
+input("press enter to close plot...")
+plt.close()
 
 
 for key in sample_time_per_track.keys():
 
     offsets = []
+    plt.subplots(figsize=(12, 6))
 
     for k in sample_time_per_track[key].keys():
 
-        plt.scatter(database_time_per_track[key][k], sample_time_per_track[key][k], marker="x")
-        # plt.scatter(database_time_per_track[key][k], sample_time_per_track[key][k], c="k", marker="x")
+        plt.scatter(database_time_per_track[key][k], sample_time_per_track[key][k], marker="x") # add c="k" for black
 
         for (d, s) in zip(database_time_per_track[key][k], sample_time_per_track[key][k]):
             offsets.append(d - s)
