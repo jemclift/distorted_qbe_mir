@@ -245,31 +245,6 @@ class Sample():
         return track_keys[np.argmax(track_scores)]
 
 
-        # window_size = 10
-        # threshold = 4 # how many times bigger than average does tallest bar have to be
-
-        # track_scores = []
-
-        # for track in track_keys:
-
-        #     score = self.calc_track_score(track)
-        #     track_scores.append(score)
-
-        #     if len(track_scores) < window_size:
-        #         continue
-
-        #     # last window_size items in list
-        #     offset = len(track_scores) - window_size
-        #     window = track_scores[offset:]
-
-        #     tallest_bar = np.argmax(window)
-        #     average = np.mean(window)
-
-        #     if track_scores[offset + tallest_bar] / average >= threshold:
-        #         actual_index = offset + tallest_bar
-        #         return track_keys[actual_index]
-
-
     def original_filename(self, path):
 
         filename = os.path.basename(path)
