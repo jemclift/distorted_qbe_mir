@@ -47,16 +47,16 @@ class Spectrogram():
 
     def display(self, limit_freq=None, spg=True):
 
-        fig, ax = plt.subplots(figsize=(12, 6))
-        # fig, ax = plt.subplots()
+        # fig, ax = plt.subplots(figsize=(12, 6))
+        fig, ax = plt.subplots()
 
         if limit_freq:
             ax.set_ylim(*limit_freq)
 
         if spg:
             plt.pcolormesh(
-                self.col_times, 
-                self.row_freqs, 
+                self.col_times,
+                self.row_freqs,
                 10 * np.log10(self.spectrum), # convert intensity to dB
                 # cmap='gray',
                 shading='auto')

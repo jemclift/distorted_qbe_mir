@@ -4,7 +4,7 @@ import numpy as np
 
 class Audio():
 
-    def __init__(self, filename, channel):
+    def __init__(self, filename, channel=1):
         self.filename = filename
         self.channel_selection = channel
 

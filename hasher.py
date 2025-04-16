@@ -20,9 +20,19 @@ class Hasher():
         self.spectral_peaks = spectral_peaks
 
         # default anchor point target zone parameters
-        self.t_offset = 0.2 # points before anchor time + t_offset will not be considered
-        self.t_size = 4 # points after anchor time + t_offset + t_size will not be considered
-        self.freq_spread = 1000 # points bellow anchor freq - freq_spread or above anchor freq + freq_spread will not be considered
+        # self.t_offset = 0.2 # points before anchor time + t_offset will not be considered
+        # self.t_size = 4 # points after anchor time + t_offset + t_size will not be considered
+        # self.freq_spread = 1000 # points bellow anchor freq - freq_spread or above anchor freq + freq_spread will not be considered
+
+        # self.t_offset = 0.2
+        # self.t_offset = 0.1
+        self.t_offset = 0
+        self.t_size = 4
+        # self.t_size = 5
+        # self.t_size = 6
+        self.freq_spread = 1000
+        # self.freq_spread = 1200
+        # self.freq_spread = 1500 
 
     def generate_hashes(self, all_anchors=True, group_by_anchors=False):
 

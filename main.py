@@ -1,168 +1,111 @@
-from audio import Audio
-from spectrogram import Spectrogram, PointMarker
-from fingerprinter import Fingerprinter
-from hasher import Hash, Hasher
-from database import SongDetails, SongDatabase
-import pickle
+from sample import Sample
+import pickle, os
 
 
 time_range = (None, None)
 freq_range = (0, 5000)
 
-re_process_songs = False
-save_database = False
 
-if re_process_songs:
+# load database
 
-    database = SongDatabase()
-    songs = ["The Clocktower Reel.wav", "22 Remix.wav", "SEE NO EVIL.wav"]
+print("loading database...")
+with open("song_database", "rb") as db_file:
+    database = pickle.load(db_file)
+print("loaded")
 
-    for song in songs:
 
-        print(f"analysing \"{song}\"...")
+# analyse sample
 
-        # load the audio, spectrogram and fingerprinter
-        audio = Audio(song, 1)
-        spectrogram = Spectrogram(audio.audio_data, audio.sampling_freq)
-        fingeprinter = Fingerprinter(spectrogram.spectrum, spectrogram.row_freqs, spectrogram.col_times)
+# sample_filename = "../small_qbe_dataset/samples/unchanged/blues_00000_o1.4624604095380658.wav"
+# recorded_filename = "../small_qbe_dataset/recordings/unchanged/blues_00000_o1.4624604095380658_recorded.wav"
 
-        # find the spectral peaks and add their point markers to the graph
-        spectral_peaks = fingeprinter.find_peaks(*freq_range, *time_range)
+# sample = Sample(sample_filename, database, False)
+# sample.load_stage_1()
+# print("loaded sample")
 
-        # generate the hashes
-        hasher = Hasher(spectral_peaks)
-        hashes = hasher.generate_hashes(True, False)
+# recorded = Sample(recorded_filename, database, False)
+# recorded.load_stage_1()
+# print("loaded recording")
 
-        for pm in spectral_peaks:
-            spectrogram.add_point_marker(pm)
+# sample.show_peaks()
+# recorded.show_peaks()
 
-        spectrogram.display()
-        spectrogram.display(freq_range)
-        spectrogram.display(freq_range, False)
 
-        # store the song in the database
-        song_details = SongDetails(song, "unknown", "unknown")
-        database.add_song(song_details, hashes)
+# save all hash hit graphs
 
-    print("done processing")
+# dataset_path = "../small_qbe_dataset/recordings/unchanged/"
 
-    if save_database:
-        with open("song_database", "wb") as db_file:
-            pickle.dump(database, db_file)
+# for filename in os.listdir(dataset_path):
 
-        print("database dumped")
-    else:
-        print("not dumping database")
+#     if not filename.endswith(".wav"):
+#         continue
 
-else:
-    with open("song_database", "rb") as db_file:
-        database = pickle.load(db_file)
+#     print(f"testing '{filename}'...")
 
-    print("database loaded")
+#     full_path = os.path.join(dataset_path, filename)
+
+#     sample = Sample(full_path, database)
+#     sample.hits_graph(save_file_instead=True)
+
+#     print(f"saved '{filename}' hash hits graph")
 
 
 
+# path = "../small_qbe_dataset/recordings/unchanged/blues_00054_o13.338763464108158_recorded.wav"
+# path = "../small_qbe_dataset/recordings/unchanged/disco_00040_o18.993340807328412_recorded.wav"
+# path = "../small_qbe_dataset/recordings/unchanged/reggae_00063_o5.6526555675347705_recorded.wav"
+# path = "../small_qbe_dataset/recordings/unchanged/classical_00077_o1.529393028761099_recorded.wav"
+
+# sample = Sample(path, database)
+# # sample.original_filename(filename)
+
+# sample.hits_graph()
+# sample.match_to_db_track_old()
 
 
 
 
 
+dataset_path = "../small_qbe_dataset/recordings/unchanged/"
+# dataset_path = "../small_qbe_dataset/recordings/unchanged_cafe/"
+# dataset_path = "../small_qbe_dataset/recordings/unchanged_street/"
+
+# dataset_path = "../small_qbe_dataset/recordings/pitch_altered/"
+# dataset_path = "../small_qbe_dataset/recordings/pitch_and_tempo_altered/"
+# dataset_path = "../small_qbe_dataset/recordings/tempo_altered/"
+# dataset_path = "../small_qbe_dataset/recordings/speed_altered/"
+
+correct = 0
+total = 0
+
+for filename in os.listdir(dataset_path):
+
+    if not filename.endswith(".wav"):
+        continue
+
+    print(f"testing '{filename}'...")
+
+    full_path = os.path.join(dataset_path, filename)
+
+    sample = Sample(full_path, database)
+    sample.original_filename(filename)
+
+    sample.hits_graph()
+    sample.match_to_db_track_old()
+
+#     track_match = sample.match_to_db_track()
+#     title = database.get_song_details(track_match).title
+#     print(f"matched {title}")
 
 
+#     if sample.original_filename(filename) == title:
+#         print("correct")
+#         correct += 1
+#     else:
+#         print("WRONG")
 
-import numpy as np
-import matplotlib.pyplot as plt
+#     total += 1
 
+#     print("-------------------------")
 
-audio = Audio("clock sample.wav", 1)
-spectrogram = Spectrogram(audio.audio_data, audio.sampling_freq)
-fingeprinter = Fingerprinter(spectrogram.spectrum, spectrogram.row_freqs, spectrogram.col_times)
-spectral_peaks = fingeprinter.find_peaks(*freq_range, *time_range)
-hasher = Hasher(spectral_peaks)
-hashes = hasher.generate_hashes(True, True)
-
-song_hits = {}
-sample_time_per_track = {}
-database_time_per_track = {}
-
-
-def store_hit(anchor_no, track_index, sample_offset, database_offset):
-
-    if track_index not in sample_time_per_track:
-        sample_time_per_track[track_index] = {}
-        database_time_per_track[track_index] = {}
-
-    if anchor_no not in sample_time_per_track[track_index]:
-        sample_time_per_track[track_index][anchor_no] = []
-        database_time_per_track[track_index][anchor_no] = []
-
-    sample_time_per_track[track_index][anchor_no].append(sample_offset)
-    database_time_per_track[track_index][anchor_no].append(database_offset)
-
-    if track_index not in song_hits:
-        song_hits[track_index] = 0
-
-    song_hits[track_index] += 1
-
-
-for anchor_no, anchor_group in enumerate(hashes):
-
-    for anon_hash in anchor_group:
-
-        hits = database.search_hash(anon_hash)
-
-        if hits == None:
-            continue
-
-        for hit in hits:
-            track_index, database_offset = hit
-            store_hit(anchor_no, track_index, anon_hash.anchor_time_abs, database_offset)
-
-
-if len(sample_time_per_track.keys()) == 0:
-    print("no hash hits")
-    exit()
-
-
-plt.bar([str(x) for x in song_hits.keys()], song_hits.values(), color="#4D4670")
-print(song_hits)
-
-plt.title("hash matches for sample in database")
-plt.xlabel("track number")
-plt.ylabel("hash matches")
-
-plt.show(block=False)
-input("press enter to close plot...")
-plt.close()
-
-
-for key in sample_time_per_track.keys():
-
-    offsets = []
-    plt.subplots(figsize=(12, 6))
-
-    for k in sample_time_per_track[key].keys():
-
-        plt.scatter(database_time_per_track[key][k], sample_time_per_track[key][k], marker="x") # add c="k" for black
-
-        for (d, s) in zip(database_time_per_track[key][k], sample_time_per_track[key][k]):
-            offsets.append(d - s)
-
-    plt.title(f"track {key} hash matches")
-    plt.xlabel("database soundfile time")
-    plt.ylabel("sample soundfile time")
-
-    plt.show(block=False)
-    input("press enter to close plot...")
-    plt.close()
-
-
-    counts, bins = np.histogram(offsets, bins=100)
-    plt.stairs(counts, bins, color="#4D4670", fill=True)
-
-    plt.title(f"track {key} ")
-    plt.xlabel("offset (database time - sample time)")
-
-    plt.show(block=False)
-    input("press enter to close plot...")
-    plt.close()
+# print(f"{correct} / {total} - {100 * correct/total} %")

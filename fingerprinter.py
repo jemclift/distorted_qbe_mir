@@ -29,7 +29,13 @@ class Fingerprinter():
                 # north, east, south, west
                 # a, b, c, d = 7, 25, 7, 25
 
-                a, b, c, d = 7, 30, 7, 30
+                # a, b, c, d = 7, 30, 7, 30
+                # a, b, c, d = 5, 20, 5, 20
+                # a, b, c, d = 4, 16, 4, 16
+                a, b, c, d = 4, 13, 4, 13
+                # TODO increase from 12
+                # a, b, c, d = 3, 10, 3, 10
+                # a, b, c, d = 5, 25, 5, 25
 
                 if self.is_local_maxima((row_i, col_i), (a, b, c, d)):
                     peak = PointMarker(self.col_times[col_i], self.row_freqs[row_i])
