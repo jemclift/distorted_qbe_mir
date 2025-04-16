@@ -10,6 +10,7 @@ freq_range = (0, 5000)
 
 print("loading database...")
 with open("song_database", "rb") as db_file:
+# with open("song_database_full", "rb") as db_file:
     database = pickle.load(db_file)
 print("loaded")
 
@@ -66,11 +67,11 @@ print("loaded")
 
 
 
-dataset_path = "../small_qbe_dataset/recordings/unchanged/"
+# dataset_path = "../small_qbe_dataset/recordings/unchanged/"
 # dataset_path = "../small_qbe_dataset/recordings/unchanged_cafe/"
 # dataset_path = "../small_qbe_dataset/recordings/unchanged_street/"
 
-# dataset_path = "../small_qbe_dataset/recordings/pitch_altered/"
+dataset_path = "../small_qbe_dataset/recordings/pitch_altered/"
 # dataset_path = "../small_qbe_dataset/recordings/pitch_and_tempo_altered/"
 # dataset_path = "../small_qbe_dataset/recordings/tempo_altered/"
 # dataset_path = "../small_qbe_dataset/recordings/speed_altered/"
@@ -83,29 +84,33 @@ for filename in os.listdir(dataset_path):
     if not filename.endswith(".wav"):
         continue
 
-    print(f"testing '{filename}'...")
+    # print(f"testing '{filename}'...")
 
     full_path = os.path.join(dataset_path, filename)
 
     sample = Sample(full_path, database)
-    sample.original_filename(filename)
+    sample_name = sample.original_filename(filename)
 
-    sample.hits_graph()
-    sample.match_to_db_track_old()
+    # sample.hits_graph()
+    # sample.match_to_db_track_old()
 
-#     track_match = sample.match_to_db_track()
-#     title = database.get_song_details(track_match).title
-#     print(f"matched {title}")
+    track_match = sample.match_to_db_track()
+    title = database.get_song_details(track_match).title
 
+    # print(f"matched {title}")
 
-#     if sample.original_filename(filename) == title:
-#         print("correct")
-#         correct += 1
-#     else:
-#         print("WRONG")
+    print(sample_name, end=",")
 
-#     total += 1
+    if sample_name == title:
+        # print("correct")
+        print("1")
+        correct += 1
+    else:
+        # print("WRONG")
+        print("0")
 
-#     print("-------------------------")
+    total += 1
 
-# print(f"{correct} / {total} - {100 * correct/total} %")
+print("-------------------------")
+
+print(f"{correct} / {total} - {100 * correct/total} %")

@@ -24,15 +24,9 @@ class Hasher():
         # self.t_size = 4 # points after anchor time + t_offset + t_size will not be considered
         # self.freq_spread = 1000 # points bellow anchor freq - freq_spread or above anchor freq + freq_spread will not be considered
 
-        # self.t_offset = 0.2
-        # self.t_offset = 0.1
         self.t_offset = 0
         self.t_size = 4
-        # self.t_size = 5
-        # self.t_size = 6
         self.freq_spread = 1000
-        # self.freq_spread = 1200
-        # self.freq_spread = 1500 
 
     def generate_hashes(self, all_anchors=True, group_by_anchors=False):
 
@@ -62,7 +56,8 @@ class Hasher():
                 if point.freq > anchor_point.freq + self.freq_spread:
                     continue
                 
-                time_delta = anchor_point.time - anchor_point.time
+                time_delta = point.time - anchor_point.time
+
                 new_hash = Hash(anchor_point.freq, point.freq, time_delta, anchor_point.time)
 
                 if group_by_anchors:

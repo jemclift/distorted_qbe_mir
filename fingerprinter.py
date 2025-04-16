@@ -32,8 +32,9 @@ class Fingerprinter():
                 # a, b, c, d = 7, 30, 7, 30
                 # a, b, c, d = 5, 20, 5, 20
                 # a, b, c, d = 4, 16, 4, 16
+
                 a, b, c, d = 4, 13, 4, 13
-                # TODO increase from 12
+
                 # a, b, c, d = 3, 10, 3, 10
                 # a, b, c, d = 5, 25, 5, 25
 
@@ -43,7 +44,7 @@ class Fingerprinter():
 
             # print(f"{row_i+1} / {self.spectrum.shape[0]}")
 
-        print(f"{len(peaks)} peaks found")
+        # print(f"{len(peaks)} peaks found")
 
         return peaks
 
