@@ -120,11 +120,17 @@ class Sample():
             # if song_title != "disco_00039.wav": continue
             # if song_title != "blues_00054.wav": continue
             # if song_title != "reggae_00063.wav": continue
-            # if song_title != "classical_00077.wav": continue
+            # if song_title != "country_00025.wav": continue
 
             plt.figure(figsize=(12, 6))
 
             for k in self.sample_time_per_track[track].keys():
+
+                for s in range(len(self.database_time_per_track[track][k])):
+                    self.database_time_per_track[track][k][s] /= 1.9295610185897200
+
+                # for s in range(len(self.sample_time_per_track[track][k])):
+                #     self.sample_time_per_track[track][k][s] *= 1.9295610185897200
 
                 plt.scatter(self.database_time_per_track[track][k], self.sample_time_per_track[track][k], c="k", marker="x") # add c="k" for black
 

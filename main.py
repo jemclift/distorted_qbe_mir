@@ -71,13 +71,15 @@ print("loaded")
 # dataset_path = "../small_qbe_dataset/recordings/unchanged_cafe/"
 # dataset_path = "../small_qbe_dataset/recordings/unchanged_street/"
 
-dataset_path = "../small_qbe_dataset/recordings/pitch_altered/"
+# dataset_path = "../small_qbe_dataset/recordings/pitch_altered/"
 # dataset_path = "../small_qbe_dataset/recordings/pitch_and_tempo_altered/"
-# dataset_path = "../small_qbe_dataset/recordings/tempo_altered/"
+dataset_path = "../small_qbe_dataset/recordings/tempo_altered/"
 # dataset_path = "../small_qbe_dataset/recordings/speed_altered/"
 
 correct = 0
 total = 0
+
+i = 0
 
 for filename in os.listdir(dataset_path):
 
@@ -91,26 +93,30 @@ for filename in os.listdir(dataset_path):
     sample = Sample(full_path, database)
     sample_name = sample.original_filename(filename)
 
-    # sample.hits_graph()
-    # sample.match_to_db_track_old()
+    # if i==1:
+    if filename == "country_00025_t1.9295610185897236_o5.466721323818901_recorded.wav":
+        sample.hits_graph()
+        sample.match_to_db_track_old()
 
-    track_match = sample.match_to_db_track()
-    title = database.get_song_details(track_match).title
+    # i += 1
 
-    # print(f"matched {title}")
+#     track_match = sample.match_to_db_track()
+#     title = database.get_song_details(track_match).title
 
-    print(sample_name, end=",")
+#     # print(f"matched {title}")
 
-    if sample_name == title:
-        # print("correct")
-        print("1")
-        correct += 1
-    else:
-        # print("WRONG")
-        print("0")
+#     print(sample_name, end=",")
 
-    total += 1
+#     if sample_name == title:
+#         # print("correct")
+#         print("1")
+#         correct += 1
+#     else:
+#         # print("WRONG")
+#         print("0")
 
-print("-------------------------")
+#     total += 1
 
-print(f"{correct} / {total} - {100 * correct/total} %")
+# print("-------------------------")
+
+# print(f"{correct} / {total} - {100 * correct/total} %")
