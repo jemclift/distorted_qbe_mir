@@ -66,6 +66,15 @@ print("loaded")
 
 
 
+def get_multiplier(filename):
+
+    parts = filename.split("_")
+
+    for part in parts:
+        if part[0] in ['t', 'x']:
+            return float(part[1:])
+    
+    return 1
 
 # dataset_path = "../small_qbe_dataset/recordings/unchanged/"
 # dataset_path = "../small_qbe_dataset/recordings/unchanged_cafe/"
@@ -76,10 +85,12 @@ print("loaded")
 dataset_path = "../small_qbe_dataset/recordings/tempo_altered/"
 # dataset_path = "../small_qbe_dataset/recordings/speed_altered/"
 
+# dataset_paths = ["../small_qbe_dataset/recordings/unchanged/", "../small_qbe_dataset/recordings/unchanged_cafe/", "../small_qbe_dataset/recordings/unchanged_street/", "../small_qbe_dataset/recordings/pitch_altered/", "../small_qbe_dataset/recordings/pitch_and_tempo_altered/", "../small_qbe_dataset/recordings/tempo_altered/", "../small_qbe_dataset/recordings/speed_altered/"]
+
+# for dataset_path in dataset_paths:
+
 correct = 0
 total = 0
-
-i = 0
 
 for filename in os.listdir(dataset_path):
 
@@ -90,15 +101,13 @@ for filename in os.listdir(dataset_path):
 
     full_path = os.path.join(dataset_path, filename)
 
-    sample = Sample(full_path, database)
+    m = get_multiplier(filename)
+    sample = Sample(full_path, database, m)
     sample_name = sample.original_filename(filename)
 
-    # if i==1:
     if filename == "country_00025_t1.9295610185897236_o5.466721323818901_recorded.wav":
-        sample.hits_graph()
+        # sample.hits_graph()
         sample.match_to_db_track_old()
-
-    # i += 1
 
 #     track_match = sample.match_to_db_track()
 #     title = database.get_song_details(track_match).title
@@ -119,4 +128,7 @@ for filename in os.listdir(dataset_path):
 
 # print("-------------------------")
 
+# print(dataset_path)
 # print(f"{correct} / {total} - {100 * correct/total} %")
+
+# print("-------------------------\n")

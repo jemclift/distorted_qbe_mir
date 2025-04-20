@@ -2,6 +2,7 @@ from audio import Audio
 from spectrogram import Spectrogram
 from fingerprinter import Fingerprinter
 from hasher import Hasher
+from hough import Hough
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,10 +15,11 @@ freq_range = (0, 5000)
 
 class Sample():
 
-    def __init__(self, filename, database, load=True):
+    def __init__(self, filename, database, multiplier, load=True):
 
         self.filename = filename
         self.database = database
+        self.multiplier = multiplier
 
         # can load manually if only spectral peaks are needed
         if load:
@@ -120,17 +122,36 @@ class Sample():
             # if song_title != "disco_00039.wav": continue
             # if song_title != "blues_00054.wav": continue
             # if song_title != "reggae_00063.wav": continue
-            # if song_title != "country_00025.wav": continue
+            if song_title != "country_00025.wav": continue
 
             plt.figure(figsize=(12, 6))
+
+            # all_xs = []
+            # all_ys = []
+
+            # for k in self.sample_time_per_track[track].keys():
+            #     all_xs += self.database_time_per_track[track][k]
+            #     all_ys += self.sample_time_per_track[track][k]
+
+            # hough = Hough(all_xs, all_ys)
+            # grad = hough.get_line_grad()
+            # multiplier = 1/grad
+
+            # print(f"actual {1.9295610185897200}")
+            # print(f"calc   {multiplier}")
 
             for k in self.sample_time_per_track[track].keys():
 
                 for s in range(len(self.database_time_per_track[track][k])):
+                    # self.database_time_per_track[track][k][s] /= 1.83308297 # -5
+                    # self.database_time_per_track[track][k][s] /= 1.88132199 # -2.5
+                    # self.database_time_per_track[track][k][s] /= 1.91026541 # -1
                     self.database_time_per_track[track][k][s] /= 1.9295610185897200
+                    # self.database_time_per_track[track][k][s] /= 1.94885663 # +1
+                    # self.database_time_per_track[track][k][s] /= 1.97780004 # +2.5
+                    # self.database_time_per_track[track][k][s] /= 2.02603907 # 5
 
-                # for s in range(len(self.sample_time_per_track[track][k])):
-                #     self.sample_time_per_track[track][k][s] *= 1.9295610185897200
+                    # self.database_time_per_track[track][k][s] /= multiplier
 
                 plt.scatter(self.database_time_per_track[track][k], self.sample_time_per_track[track][k], c="k", marker="x") # add c="k" for black
 
@@ -220,7 +241,22 @@ class Sample():
 
         offsets = []
 
+        # all_xs = []
+        # all_ys = []
+
+        # for k in self.sample_time_per_track[track].keys():
+        #     all_xs += self.database_time_per_track[track][k]
+        #     all_ys += self.sample_time_per_track[track][k]
+
+        # hough = Hough(all_xs, all_ys)
+        # grad = hough.get_line_grad()
+        # multiplier = 1/grad
+
         for k in self.sample_time_per_track[track].keys():
+
+            for s in range(len(self.database_time_per_track[track][k])):
+                self.database_time_per_track[track][k][s] /= self.multiplier
+
             for (d, s) in zip(self.database_time_per_track[track][k], self.sample_time_per_track[track][k]):
                 offsets.append(d - s)
 
