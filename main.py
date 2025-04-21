@@ -105,30 +105,30 @@ for filename in os.listdir(dataset_path):
     sample = Sample(full_path, database, m)
     sample_name = sample.original_filename(filename)
 
-    if filename == "country_00025_t1.9295610185897236_o5.466721323818901_recorded.wav":
-        # sample.hits_graph()
-        sample.match_to_db_track_old()
+    # if filename == "country_00025_t1.9295610185897236_o5.466721323818901_recorded.wav":
+    #     # sample.hits_graph()
+    #     sample.match_to_db_track_old()
 
-#     track_match = sample.match_to_db_track()
-#     title = database.get_song_details(track_match).title
+    track_match = sample.match_to_db_track()
+    title = database.get_song_details(track_match).title
 
-#     # print(f"matched {title}")
+    # print(f"matched {title}")
 
-#     print(sample_name, end=",")
+    print(sample_name, end=",")
 
-#     if sample_name == title:
-#         # print("correct")
-#         print("1")
-#         correct += 1
-#     else:
-#         # print("WRONG")
-#         print("0")
+    if sample_name == title:
+        # print("correct")
+        print("1")
+        correct += 1
+    else:
+        # print("WRONG")
+        print("0")
 
-#     total += 1
+    total += 1
 
-# print("-------------------------")
+print("-------------------------")
 
-# print(dataset_path)
-# print(f"{correct} / {total} - {100 * correct/total} %")
+print(dataset_path)
+print(f"{correct} / {total} - {100 * correct/total} %")
 
-# print("-------------------------\n")
+print("-------------------------\n")
