@@ -4,16 +4,14 @@ from spectrogram import PointMarker
 # anonymous hash, contains details about a pair of points
 class Hash():
 
-    # def __init__(self, anchor_freq, pair_freq, time_delta, anchor_time_abs):
-    def __init__(self, anchor_freq, pair_freq, anchor_time_abs):
+    def __init__(self, anchor_freq, pair_freq, time_delta, anchor_time_abs):
         self.anchor_freq = anchor_freq
         self.pair_freq = pair_freq
-        # self.time_delta = time_delta
+        self.time_delta = time_delta
         self.anchor_time_abs = anchor_time_abs
 
     def __hash__(self):
-        # return hash((self.anchor_freq, self.pair_freq, self.time_delta))
-        return hash((self.anchor_freq, self.pair_freq))
+        return hash((self.anchor_freq, self.pair_freq, self.time_delta))
 
 
 class Hasher():
@@ -58,10 +56,9 @@ class Hasher():
                 if point.freq > anchor_point.freq + self.freq_spread:
                     continue
                 
-                # time_delta = point.time - anchor_point.time
+                time_delta = point.time - anchor_point.time
 
-                # new_hash = Hash(anchor_point.freq, point.freq, time_delta, anchor_point.time)
-                new_hash = Hash(anchor_point.freq, point.freq, anchor_point.time)
+                new_hash = Hash(anchor_point.freq, point.freq, time_delta, anchor_point.time)
 
                 if group_by_anchors:
                     hashes[-1].append(new_hash)
