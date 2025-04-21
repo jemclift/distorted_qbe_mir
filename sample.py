@@ -241,22 +241,22 @@ class Sample():
 
         offsets = []
 
-        all_xs = []
-        all_ys = []
+        # all_xs = []
+        # all_ys = []
 
-        for k in self.sample_time_per_track[track].keys():
-            all_xs += self.database_time_per_track[track][k]
-            all_ys += self.sample_time_per_track[track][k]
+        # for k in self.sample_time_per_track[track].keys():
+        #     all_xs += self.database_time_per_track[track][k]
+        #     all_ys += self.sample_time_per_track[track][k]
 
-        hough = Hough(all_xs, all_ys)
-        grad = hough.get_line_grad()
-        multiplier = 1/grad
+        # hough = Hough(all_xs, all_ys)
+        # grad = hough.get_line_grad()
+        # multiplier = 1/grad
 
         for k in self.sample_time_per_track[track].keys():
 
             for s in range(len(self.database_time_per_track[track][k])):
-                # self.database_time_per_track[track][k][s] /= self.multiplier
-                self.database_time_per_track[track][k][s] /= multiplier
+                self.database_time_per_track[track][k][s] /= self.multiplier
+                # self.database_time_per_track[track][k][s] /= multiplier
 
             for (d, s) in zip(self.database_time_per_track[track][k], self.sample_time_per_track[track][k]):
                 offsets.append(d - s)
