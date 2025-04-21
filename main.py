@@ -71,46 +71,53 @@ print("loaded")
 # dataset_path = "../small_qbe_dataset/recordings/unchanged_cafe/"
 # dataset_path = "../small_qbe_dataset/recordings/unchanged_street/"
 
-dataset_path = "../small_qbe_dataset/recordings/pitch_altered/"
+# dataset_path = "../small_qbe_dataset/recordings/pitch_altered/"
 # dataset_path = "../small_qbe_dataset/recordings/pitch_and_tempo_altered/"
 # dataset_path = "../small_qbe_dataset/recordings/tempo_altered/"
 # dataset_path = "../small_qbe_dataset/recordings/speed_altered/"
 
-correct = 0
-total = 0
+dataset_paths = ["../small_qbe_dataset/recordings/unchanged/", "../small_qbe_dataset/recordings/unchanged_cafe/", "../small_qbe_dataset/recordings/unchanged_street/", "../small_qbe_dataset/recordings/pitch_altered/", "../small_qbe_dataset/recordings/pitch_and_tempo_altered/", "../small_qbe_dataset/recordings/tempo_altered/", "../small_qbe_dataset/recordings/speed_altered/"]
 
-for filename in os.listdir(dataset_path):
+for dataset_path in dataset_paths:
 
-    if not filename.endswith(".wav"):
-        continue
+    correct = 0
+    total = 0
 
-    # print(f"testing '{filename}'...")
+    for filename in os.listdir(dataset_path):
 
-    full_path = os.path.join(dataset_path, filename)
+        if not filename.endswith(".wav"):
+            continue
 
-    sample = Sample(full_path, database)
-    sample_name = sample.original_filename(filename)
+        # print(f"testing '{filename}'...")
 
-    # sample.hits_graph()
-    # sample.match_to_db_track_old()
+        full_path = os.path.join(dataset_path, filename)
 
-    track_match = sample.match_to_db_track()
-    title = database.get_song_details(track_match).title
+        sample = Sample(full_path, database)
+        sample_name = sample.original_filename(filename)
 
-    # print(f"matched {title}")
+        # sample.hits_graph()
+        # sample.match_to_db_track_old()
 
-    print(sample_name, end=",")
+        track_match = sample.match_to_db_track()
+        title = database.get_song_details(track_match).title
 
-    if sample_name == title:
-        # print("correct")
-        print("1")
-        correct += 1
-    else:
-        # print("WRONG")
-        print("0")
+        # print(f"matched {title}")
 
-    total += 1
+        print(sample_name, end=",")
 
-print("-------------------------")
+        if sample_name == title:
+            # print("correct")
+            print("1")
+            correct += 1
+        else:
+            # print("WRONG")
+            print("0")
 
-print(f"{correct} / {total} - {100 * correct/total} %")
+        total += 1
+
+    print("-------------------------")
+
+    print(dataset_path)
+    print(f"{correct} / {total} - {100 * correct/total} %")
+
+    print("-------------------------\n")

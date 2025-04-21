@@ -14,8 +14,8 @@ re_process_songs = True
 save_database = True
 show_graphs_while_processing = False
 
-# dataset_dir = "../small_qbe_dataset/full_songs/songs/"
-dataset_dir = "../small_qbe_dataset/all_songs/"
+dataset_dir = "../small_qbe_dataset/full_songs/songs/"
+# dataset_dir = "../small_qbe_dataset/all_songs/"
 skip_songs = ["jazz_00054.wav"]
 
 
