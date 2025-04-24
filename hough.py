@@ -22,23 +22,17 @@ class Hough:
             x = self.xs[i]
             y = self.ys[i]
 
-            # 4. Iterate through Gradients
-            # We'll use more steps for gradient for finer detection
-
             num_gradients = 200
 
             for j in range(num_gradients):
 
                 gradient = gradient_lower_bound + (j / (num_gradients - 1)) * (gradient_upper_bound - gradient_lower_bound)
 
-                # 5. Calculate Rho
                 rho = y - gradient * x
 
-                # 6. Quantize Gradient.  Important for using a dictionary as accumulator.
-                quantized_gradient = round(gradient, 2)  # Quantize to 2 decimal places
+                quantized_gradient = round(gradient, 2)
                 # quantized_gradient = gradient
 
-                # 7. Update Accumulator
                 if (rho, quantized_gradient) in accumulator:
                     accumulator[(rho, quantized_gradient)] += 1
                 else:
