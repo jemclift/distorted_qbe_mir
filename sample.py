@@ -42,8 +42,12 @@ class Sample():
         self.hashes = hasher.generate_hashes(True, True)
         
         self.song_hits = {}
+
         self.sample_time_per_track = {}
         self.database_time_per_track = {}
+
+        self.sample_freq_per_track = {}
+        self.database_freq_per_track = {}
 
         self.catagorise_hashes()
 
@@ -56,18 +60,27 @@ class Sample():
         self.spectrogram.display(freq_range)
 
 
-    def store_hit(self, anchor_no, track_index, sample_offset, database_offset):
+    def store_hit(self, anchor_no, track_index, sample_offset, database_offset, sample_freq, database_freq):
 
         if track_index not in self.sample_time_per_track:
             self.sample_time_per_track[track_index] = {}
             self.database_time_per_track[track_index] = {}
 
+            self.sample_freq_per_track[track_index] = {}
+            self.database_freq_per_track[track_index] = {}
+
         if anchor_no not in self.sample_time_per_track[track_index]:
             self.sample_time_per_track[track_index][anchor_no] = []
             self.database_time_per_track[track_index][anchor_no] = []
 
+            self.sample_freq_per_track[track_index][anchor_no] = []
+            self.database_freq_per_track[track_index][anchor_no] = []
+
         self.sample_time_per_track[track_index][anchor_no].append(sample_offset)
         self.database_time_per_track[track_index][anchor_no].append(database_offset)
+
+        self.sample_freq_per_track[track_index][anchor_no].append(sample_offset)
+        self.database_freq_per_track[track_index][anchor_no].append(database_offset)
 
         if track_index not in self.song_hits:
             self.song_hits[track_index] = 0
@@ -86,11 +99,11 @@ class Sample():
                     continue
 
                 for hit in hits:
-                    track_index, database_offset = hit
-                    self.store_hit(anchor_no, track_index, anon_hash.anchor_time_abs, database_offset)
+                    track_index, database_time, database_freq = hit
+                    self.store_hit(anchor_no, track_index, anon_hash.anchor_time_abs, database_time, anon_hash.anchor_freq_abs, database_freq)
 
 
-    # adds reference line on y axis
+    # adds reference line on y axis,
     def reference_line_y(self, value, text, colour="k"):
 
         plt.axhline(value, color=colour)
@@ -336,6 +349,59 @@ class Sample():
             plt.title(f"track {key} ")
             plt.xlabel("offset (database time - sample time)")
 
+            plt.show(block=False)
+            input("press enter to close plot...")
+            plt.close()
+
+    # 
+    def analyse_pitch(self):
+
+        # start with track with most hash hits
+        track_keys = sorted(self.song_hits.keys(), key=lambda k: self.song_hits[k], reverse=True)
+
+        for track in track_keys:
+
+            offsets = []
+
+            song_title = self.database.get_song_details(track).title
+
+            plt.figure(figsize=(12, 6))
+
+            for k in self.sample_time_per_track[track].keys():
+
+                plt.scatter(self.database_freq_per_track[track][k], self.sample_freq_per_track[track][k], c="k", marker="x") # add c="k" for black
+
+                for (d, s) in zip(self.database_freq_per_track[track][k], self.sample_freq_per_track[track][k]):
+                    offsets.append(12 * np.log2(d/s))
+
+            plt.title(f"track {track} ({song_title}) hash matches")
+            plt.xlabel("database soundfile pitch")
+            plt.ylabel("sample soundfile pitch")
+
+            plt.show(block=False)
+            input("press enter to close plot...")
+            plt.close()
+
+            counts, bins = np.histogram(offsets, bins=150)
+            # counts, bins = np.histogram(offsets, bins=145)
+
+            # mean = np.mean(counts)
+            # std_dev = np.std(counts)
+            # tallest_bar = np.max(counts)
+            # sd_a_mean = (tallest_bar - mean) / std_dev
+            # median = np.median(counts)
+
+            # print(f"tallest bar {tallest_bar}")
+            # print(f"track {track} - std. dev.s above mean {sd_a_mean}")
+
+            # histogram of offsets
+            plt.subplots(figsize=(12, 6))
+            plt.stairs(counts, bins, color="#4D4670", fill=True)
+            # self.reference_line_y(mean, "mean")
+            # self.reference_line_y(median, "median", colour="r")
+            # self.reference_line_y(mean + std_dev, "std. dev. above", colour="c")
+            plt.title(f"track {track} - {self.database.get_song_details(track).title}")
+            plt.xlabel("offset in semitones")
             plt.show(block=False)
             input("press enter to close plot...")
             plt.close()

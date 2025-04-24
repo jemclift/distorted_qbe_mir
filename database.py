@@ -46,7 +46,7 @@ class SongDatabase():
 
         hits = self.song_hashes[hash(anon_hash)]
 
-        return [(hit.track_index, hit.anon_hash.anchor_time_abs) for hit in hits]
+        return [(hit.track_index, hit.anon_hash.anchor_time_abs, hit.anon_hash.anchor_freq_abs) for hit in hits]
 
 
     def get_song_details(self, song_index):

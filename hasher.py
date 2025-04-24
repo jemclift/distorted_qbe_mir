@@ -1,18 +1,18 @@
 from spectrogram import PointMarker
+import numpy as np
 
 
 # anonymous hash, contains details about a pair of points
 class Hash():
 
-    def __init__(self, time_delta_1, freq_delta_1, time_delta_2, freq_delta_2, anchor_time_abs):
-        self.time_delta_1 = time_delta_1
-        self.freq_delta_1 = freq_delta_1
-        self.time_delta_2 = time_delta_2
-        self.freq_delta_2 = freq_delta_2
+    def __init__(self, time_delta, freq_delta, anchor_time_abs, anchor_freq_abs):
+        self.time_delta = time_delta
+        self.freq_delta = freq_delta
         self.anchor_time_abs = anchor_time_abs
+        self.anchor_freq_abs = anchor_freq_abs
 
     def __hash__(self):
-        return hash((self.time_delta_1, self.freq_delta_1, self.time_delta_2, self.freq_delta_2))
+        return hash((self.time_delta, self.freq_delta))
 
 
 class Hasher():
@@ -67,30 +67,17 @@ class Hasher():
             if group_by_anchors:
                 hashes.append([])
 
-            target_points = self.get_target_zone_points(anchor_point)
-
-            for point_1 in target_points:
-                for point_2 in target_points:
-
-                    if point_1 != point_2:
+            for point in self.get_target_zone_points(anchor_point):
                 
-                        time_delta_1 = point_1.time - anchor_point.time
-                        freq_delta_1 = point_1.freq - anchor_point.freq
+                time_delta = point.time - anchor_point.time
+                # freq_delta = point.freq - anchor_point.freq
+                freq_delta = 12 * np.log2(point.freq/anchor_point.freq)
 
-                        time_delta_2 = point_2.time - anchor_point.time
-                        freq_delta_2 = point_2.freq - anchor_point.freq
+                new_hash = Hash(time_delta, freq_delta, anchor_point.time, anchor_point.freq)
 
-                        # time_delta_1 = point_1.time - anchor_point.time
-                        # freq_delta_1 = point_1.freq - anchor_point.freq
-
-                        # time_delta_2 = point_2.time - point_1.time
-                        # freq_delta_2 = point_2.freq - point_1.freq
-
-                        new_hash = Hash(time_delta_1, freq_delta_1, time_delta_2, freq_delta_2, anchor_point.time)
-
-                        if group_by_anchors:
-                            hashes[-1].append(new_hash)
-                        else:
-                            hashes.append(new_hash)
+                if group_by_anchors:
+                    hashes[-1].append(new_hash)
+                else:
+                    hashes.append(new_hash)
 
         return hashes
